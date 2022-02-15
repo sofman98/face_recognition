@@ -33,25 +33,19 @@ while True:
         for face_location in face_locations:
             #verify the liveness of the face (not a photo)
             # we use the full image
-            # (top, right, bottom, left) = face_location
             # liveness = verify_liveness(frame, (top*4, right*4, bottom*4, left*4))  #the locations needs reajusting
-            liveness = verify_liveness(small_frame, face_location)  
-            # liveness = True
-            if liveness:
-                name = "Unknown"
-                # Get the detected face's encoding
-                face_encoding = face_recognition.face_encodings(rgb_small_frame, [face_location])
-                # See if the face is a match for the known face(s)
-                matches = face_recognition.compare_faces(known_face_encodings, face_encoding[0])  #[0] because it returns an array
+            # liveness = verify_liveness(small_frame)  
+            name = "Unknown"
+            # Get the detected face's encoding
+            face_encoding = face_recognition.face_encodings(rgb_small_frame, [face_location])
+            # See if the face is a match for the known face(s)
+            matches = face_recognition.compare_faces(known_face_encodings, face_encoding[0])  #[0] because it returns an array
 
-                # Use the known face with the smallest distance to the new face
-                face_distances = face_recognition.face_distance(known_face_encodings, face_encoding[0])
-                best_match_index = np.argmin(face_distances)
-                if matches[best_match_index]:
-                    name = known_face_names[best_match_index]
-
-            else:
-                name = 'Fake'
+            # Use the known face with the smallest distance to the new face
+            face_distances = face_recognition.face_distance(known_face_encodings, face_encoding[0])
+            best_match_index = np.argmin(face_distances)
+            if matches[best_match_index]:
+                name = known_face_names[best_match_index]
 
             face_names.append(name)
     process_this_frame = not process_this_frame
