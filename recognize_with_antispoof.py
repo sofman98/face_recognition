@@ -2,8 +2,7 @@ import face_recognition
 import cv2
 import numpy as np
 from known_faces import known_face_encodings, known_face_names
-from face_detection import get_face_locations
-from liveness_detection import verify_liveness
+from spoof_detection import check_spoof
 
 video_capture = cv2.VideoCapture(0)
 
@@ -28,13 +27,13 @@ while True:
 
         face_names = []
 
-        (face_location, liveness) = verify_liveness(small_frame)  
+        (face_location, spoof) = check_spoof(small_frame)  
 
         #verify the liveness of the face (not a photo)
         # we use the full image
         # liveness = verify_liveness(frame, (top*4, right*4, bottom*4, left*4))  #the locations needs reajusting
         # liveness = True
-        if liveness:
+        if not spoof:
             name = "Unknown"
             # Get the detected face's encoding
             face_encoding = face_recognition.face_encodings(rgb_small_frame, [face_location])
@@ -61,10 +60,16 @@ while True:
     left *= 4
 
     # Draw a box around the face
-    cv2.rectangle(frame, (left, top), (right, bottom), (0, 0, 255), 2)
+    if name=="Fake":
+        color = (0, 0, 0) # black
+    elif name=="Unknown":
+        color = (0, 0, 255) # red
+    else:
+        color = (0, 255, 0) # green
+    cv2.rectangle(frame, (left, top), (right, bottom), color, 2)
 
     # Draw a label with a name below the face
-    cv2.rectangle(frame, (left, bottom - 35), (right, bottom), (0, 0, 255), cv2.FILLED)
+    cv2.rectangle(frame, (left, bottom - 35), (right, bottom), color, cv2.FILLED)
     font = cv2.FONT_HERSHEY_DUPLEX
     cv2.putText(frame, name, (left + 6, bottom - 6), font, 1.0, (255, 255, 255), 1)
 
