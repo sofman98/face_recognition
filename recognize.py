@@ -3,7 +3,6 @@ import cv2
 import numpy as np
 from known_faces import known_face_encodings, known_face_names
 from face_detection import get_face_locations
-from liveness_detection import verify_liveness
 
 video_capture = cv2.VideoCapture(0)
 
@@ -16,6 +15,7 @@ process_this_frame = True
 while True:
     # Grab a single frame of video
     ret, frame = video_capture.read()
+
     # Resize frame of video to 1/4 size for faster face recognition processing
     small_frame = cv2.resize(frame, (0, 0), fx=0.25, fy=0.25)
 
@@ -26,28 +26,22 @@ while True:
     if process_this_frame:
         # Find all the faces and face encodings in the current frame of video
         face_locations = get_face_locations(rgb_small_frame)
-        # face_encodings = face_recognition.face_encodings(rgb_small_frame, face_locations)
+        face_encodings = face_recognition.face_encodings(rgb_small_frame, face_locations)
 
         face_names = []
-
-        for face_location in face_locations:
-            #verify the liveness of the face (not a photo)
-            # we use the full image
-            # liveness = verify_liveness(frame, (top*4, right*4, bottom*4, left*4))  #the locations needs reajusting
-            # liveness = verify_liveness(small_frame)  
-            name = "Unknown"
-            # Get the detected face's encoding
-            face_encoding = face_recognition.face_encodings(rgb_small_frame, [face_location])
+        for face_encoding in face_encodings:
             # See if the face is a match for the known face(s)
-            matches = face_recognition.compare_faces(known_face_encodings, face_encoding[0])  #[0] because it returns an array
+            matches = face_recognition.compare_faces(known_face_encodings, face_encoding)
+            name = "Unknown"
 
-            # Use the known face with the smallest distance to the new face
-            face_distances = face_recognition.face_distance(known_face_encodings, face_encoding[0])
+            # use the known face with the smallest distance to the new face
+            face_distances = face_recognition.face_distance(known_face_encodings, face_encoding)
             best_match_index = np.argmin(face_distances)
             if matches[best_match_index]:
                 name = known_face_names[best_match_index]
 
             face_names.append(name)
+
     process_this_frame = not process_this_frame
 
 

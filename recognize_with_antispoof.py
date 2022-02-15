@@ -23,16 +23,10 @@ while True:
 
     # Only process every other frame of video to save time
     if process_this_frame:
-        # Find all the faces and face encodings in the current frame of video
-
-        face_names = []
-
-        (face_location, spoof) = check_spoof(small_frame)  
 
         #verify the liveness of the face (not a photo)
-        # we use the full image
-        # liveness = verify_liveness(frame, (top*4, right*4, bottom*4, left*4))  #the locations needs reajusting
-        # liveness = True
+        (face_location, spoof) = check_spoof(small_frame)  
+
         if not spoof:
             name = "Unknown"
             # Get the detected face's encoding
