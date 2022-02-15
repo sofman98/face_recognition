@@ -35,8 +35,8 @@ while True:
             # we use the full image
             # (top, right, bottom, left) = face_location
             # liveness = verify_liveness(frame, (top*4, right*4, bottom*4, left*4))  #the locations needs reajusting
-            # liveness = verify_liveness(small_frame, face_location)  #the locations needs reajusting
-            liveness = True
+            liveness = verify_liveness(small_frame, face_location)  
+            # liveness = True
             if liveness:
                 name = "Unknown"
                 # Get the detected face's encoding

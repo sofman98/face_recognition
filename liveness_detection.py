@@ -1,45 +1,59 @@
-import cv2
-from tensorflow.keras.preprocessing.image import img_to_array
 import os
+import cv2
 import numpy as np
-from tensorflow.keras.models import model_from_json
+import argparse
+import warnings
+import time
 
-root_dir = os.getcwd()
-# Load Anti-Spoofing Model graph
-json_file = open('models/antispoofing_model.json','r')
-loaded_model_json = json_file.read()
-json_file.close()
-model = model_from_json(loaded_model_json)
-# load antispoofing model weights 
-model.load_weights('models/antispoofing_model.h5')
-print("Anti-spoofing model loaded from disk")
+from anti_spoofing.src.anti_spoof_predict import AntiSpoofPredict
+from anti_spoofing.src.generate_patches import CropImage
+from anti_spoofing.src.utility import parse_model_name
 
 
-#function to verify liveness of one face
-def verify_liveness(frame, face_location, threshold=0.05):
-    try:
-        #get the face coordinates
-        (top, right, bottom, left) = face_location
+def verify_liveness(image, face_location):
+    # setting up some value
+    device_id = 0
+    model_dir = "./anti_spoofing/ressources/anti_spoof_models"
 
-        #add a little extra surroundings while making sure we don't overflow
-        (max_height, max_width, _) = frame.shape
+    #get the face coordinates
+    (top, right, bottom, left) = face_location
 
-        top = max(0, top-5)
-        bottom = min(max_height, bottom+5)
-        right = max(0, right-5)
-        left = min(max_width, left+5)
+    #add a little extra surroundings while making sure we don't overflow
+    (max_height, max_width, _) = image.shape
 
-        #crop the frame to encapsulate the face plus a little more        
-        located_face = frame[top:bottom, left:right]
+    top = max(0, top-5)
+    bottom = min(max_height, bottom+5)
+    right = max(0, right-5)
+    left = min(max_width, left+5)
 
-        # resize to fit the model's expected input shape
-        resized_face = cv2.resize(located_face, (160, 160))
-        resized_face = resized_face.astype("float") / 255.0
-        resized_face = np.expand_dims(resized_face, axis=0)
+    #crop the frame to encapsulate the face plus a little more        
+    image = image[top:bottom, left:right]
 
-        prediction = model.predict(resized_face)[0]
+    # the model
+    model_test = AntiSpoofPredict(device_id)
+    image_cropper = CropImage()
 
-        return prediction <= threshold
-    except Exception as e:
-        print(e)
-        return False
+    image_bbox = model_test.get_bbox(image)
+    prediction = np.zeros((1, 3))
+
+    # sum the prediction from single model's result
+    for model_name in os.listdir(model_dir):
+        h_input, w_input, model_type, scale = parse_model_name(model_name)
+        param = {
+            "org_img": image,
+            "bbox": image_bbox,
+            "scale": scale,
+            "out_w": w_input,
+            "out_h": h_input,
+            "crop": True,
+        }
+        if scale is None:
+            param["crop"] = False
+        img = image_cropper.crop(**param)
+        prediction += model_test.predict(img, os.path.join(model_dir, model_name))
+
+    # draw result of prediction
+    label = np.argmax(prediction)
+    value = prediction[0][label]/2
+    
+    return label == 1
