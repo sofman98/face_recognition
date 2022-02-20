@@ -6,6 +6,9 @@ from spoof_detection import check_spoof
 
 video_capture = cv2.VideoCapture(0)
 
+# FOR THE DEMO - Define the codec and create VideoWriter object
+demo_saver = cv2.VideoWriter('demo_antispoof.mp4', cv2.VideoWriter_fourcc(*'MJPG'), 10, (640,480))
+
 # Initialize some variables
 face_locations = []
 face_encodings = []
@@ -16,14 +19,14 @@ while True:
     # Grab a single frame of video
     ret, frame = video_capture.read()
     # Resize frame of video to 1/4 size for faster face recognition processing
-    small_frame = cv2.resize(frame, (0, 0), fx=0.25, fy=0.25)
+    small_frame = frame#cv2.resize(frame, (0, 0), fx=0.25, fy=0.25)
 
     # Convert the image from BGR color (which OpenCV uses) to RGB color (which face_recognition uses)
     rgb_small_frame = small_frame[:, :, ::-1]
 
     # Only process every other frame of video to save time
     if process_this_frame:
-
+ 
         #verify the liveness of the face (not a photo)
         (face_location, spoof) = check_spoof(small_frame)  
 
@@ -48,10 +51,10 @@ while True:
     # Display the results
     (top, right, bottom, left) = face_location
     # Scale back up face locations since the frame we detected in was scaled to 1/4 size
-    top *= 4
-    right *= 4
-    bottom *= 4
-    left *= 4
+    # top *= 4
+    # right *= 4
+    # bottom *= 4
+    # left *= 4
 
     # Draw a box around the face
     if name=="Fake":
@@ -69,6 +72,8 @@ while True:
 
     # Display the resulting image
     cv2.imshow('Video', frame)
+    # Save frame for the demo
+    demo_saver.write(frame)
 
     # Hit 'q' on the keyboard to quit!
     if cv2.waitKey(1) & 0xFF == ord('q'):
@@ -76,4 +81,5 @@ while True:
 
 # Release handle to the webcam
 video_capture.release()
+demo_saver.release()
 cv2.destroyAllWindows()
