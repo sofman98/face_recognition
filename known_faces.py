@@ -13,9 +13,6 @@ zeghoud_face_encoding = face_encodings(zeghoud_image)[0]
 # khiar_image = load_image_file("faces/khiar_id.jpg")
 # khiar_face_encoding = face_encodings(khiar_image)[0]
 
-# hadjmiloud_image = load_image_file("faces/hadjmiloud_id.jpg")
-# hadjmiloud_face_encoding = face_encodings(hadjmiloud_image)[0]
-
 labreche_image = load_image_file("faces/labreche_id.jpg")
 labreche_face_encoding = face_encodings(labreche_image)[0]
 
@@ -26,7 +23,6 @@ known_face_encodings = [
     # bousri_face_encoding,
     # zahar_face_encoding,
     # khiar_face_encoding,
-    # hadjmiloud_face_encoding,
     labreche_face_encoding,
 ]
 
@@ -35,6 +31,5 @@ known_face_names = [
     # "Houssam Bousri",
     # "Youcef Zahar",
     # "Hamza Khiar",
-    # "Abdelkader Hadj Miloud",
     "Labreche Massinissa"
 ]
