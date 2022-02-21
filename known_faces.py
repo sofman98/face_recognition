@@ -16,6 +16,12 @@ zeghoud_face_encoding = face_encodings(zeghoud_image)[0]
 labreche_image = load_image_file("faces/labreche_id.jpg")
 labreche_face_encoding = face_encodings(labreche_image)[0]
 
+obama_image = load_image_file("faces/obama_id.jpg")
+obama_face_encoding = face_encodings(obama_image)[0]
+
+biden_image = load_image_file("faces/biden_id.jpg")
+biden_face_encoding = face_encodings(biden_image)[0]
+
 
 # Create arrays of known face encodings and their names
 known_face_encodings = [
@@ -24,6 +30,8 @@ known_face_encodings = [
     # zahar_face_encoding,
     # khiar_face_encoding,
     labreche_face_encoding,
+    obama_face_encoding,
+    biden_face_encoding,
 ]
 
 known_face_names = [
@@ -31,5 +39,7 @@ known_face_names = [
     # "Houssam Bousri",
     # "Youcef Zahar",
     # "Hamza Khiar",
-    "Labreche Massinissa"
+    "Labreche Massinissa",
+    "Barack Obama",
+    "Joe Biden"
 ]

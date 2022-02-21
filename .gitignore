@@ -1,3 +1,7 @@
+#ignore faces
 faces/*
+#except test ones
+!faces/obama_id.jpg
+!faces/biden_id.jpg
 demo/demo_antispoof0.mp4
 demo/demo_multiple_people0.mp4
