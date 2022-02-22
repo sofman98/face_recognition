@@ -5,3 +5,5 @@ faces/*
 !faces/biden_id.jpg
 demo/demo_antispoof0.mp4
 demo/demo_multiple_people0.mp4
+.vscode/*
+./_pycache_/*
