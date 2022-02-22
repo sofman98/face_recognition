@@ -14,5 +14,3 @@ $ python recognize_with_antispoof.py
 ![alt text](https://github.com/sofman98/face_recognition/blob/main/demo/demo_antispoof.gif?raw=true)
 
 Don't forget to add the faces in the "faces" folder and modify "known_faces.py" accordingly!
-
-Special thanks to @Minivision_AI and @ageitgey.
